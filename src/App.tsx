@@ -8,6 +8,8 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
+import { fetchGeekListXml } from './service';
+
 import './App.css';
 
 const useStyles = makeStyles({
@@ -21,7 +23,16 @@ const App = () => {
   const [imageSize, setImageSize] = useState('small');
   const onImageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => setImageSize(event.target.value);
 
+  const [generatedText, setGeneratedText] = useState('hi');
+
   const classes = useStyles();
+
+  const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setGeneratedText('loading');
+    const geekListXml = await fetchGeekListXml(280112);
+    setGeneratedText(geekListXml);
+  };
 
   return (
     <div className="App">
@@ -31,7 +42,7 @@ const App = () => {
         gallery of the box art and links to your auction items? Use this tool to generate text to copy and paste into a BGG post.
       </div>
 
-      <form>
+      <form onSubmit={onFormSubmit}>
 
         <TextField
           className={classes.root}
@@ -51,14 +62,14 @@ const App = () => {
           </RadioGroup>
         </FormControl>
 
-        <Button variant="contained" color="primary" className={classes.root}>
+        <Button variant="contained" color="primary" type="submit" className={classes.root}>
           Generate
         </Button>
 
       </form>
 
       <h3>Generated Text</h3>
-      <textarea className="generated-text"></textarea>
+      <textarea className="generated-text" value={generatedText} readOnly></textarea>
     </div>
   );
 }
