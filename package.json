@@ -1,7 +1,8 @@
 {
   "name": "bgg-auction-ad",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "homepage": "https://davidhorm.github.io/bgg-auction-ad",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@testing-library/jest-dom": "^5.11.4",
@@ -22,7 +23,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +46,7 @@
     ]
   },
   "devDependencies": {
-    "@types/xml2js": "^0.4.8"
+    "@types/xml2js": "^0.4.8",
+    "gh-pages": "^3.1.0"
   }
 }
