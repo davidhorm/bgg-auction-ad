@@ -20,21 +20,31 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
+  const [geekListId, setGeekListId] = useState('');
+
   const [imageSize, setImageSize] = useState('small');
   const onImageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => setImageSize(event.target.value);
 
-  const [generatedText, setGeneratedText] = useState('hi');
+  const [generatedText, setGeneratedText] = useState('');
 
   const classes = useStyles();
 
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setGeneratedText('loading');
-    const geekListXml = await fetchGeekListXml(280112);
+    const geekListXml = await fetchGeekListXml(geekListId);
     const geekListJson = await convertXmlToJson(geekListXml);
-    const geekListItems = buildSortedItems(geekListJson);
-    const text = generateText(280112, geekListItems)
-    setGeneratedText(text);
+    if (geekListJson && geekListJson.geeklist) {
+      const geekListItems = buildSortedItems(geekListJson);
+      const text = generateText(geekListId, geekListItems, imageSize);
+      setGeneratedText(text);
+    }
+    else if (geekListJson.message) {
+      setGeneratedText(geekListJson.message);
+    }
+    else {
+      setGeneratedText(geekListXml);
+    }
   };
 
   return (
@@ -53,6 +63,8 @@ const App = () => {
           label="GeekList ID"
           variant="outlined"
           type="number"
+          value={geekListId}
+          onChange={e => setGeekListId(e.target.value)}
         />
 
         <FormControl component="fieldset" className={classes.root}>

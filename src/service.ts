@@ -1,6 +1,6 @@
 import { parseStringPromise } from 'xml2js';
 
-export const fetchGeekListXml = async (geeklistId: number) => {
+export const fetchGeekListXml = async (geeklistId: string) => {
   const corsProxy = 'https://cors-anywhere.herokuapp.com/';
   const url = `${corsProxy}https://www.boardgamegeek.com/xmlapi/geeklist/${geeklistId}`;
   const response = await fetch(url)
@@ -48,8 +48,12 @@ export const buildSortedItems = (geekListJson: GeekListJson) => {
   return sortedItems;
 }
 
-const buildImageTags = (geekListItems: GeekListItem[]) => {
-  const imageTags = geekListItems.map(item => `[imageid=${item.imageid} small inline]`);
+const buildImageTags = (geekListItems: GeekListItem[], imageSize: string) => {
+  if (imageSize === 'hidden') {
+    return '';
+  }
+
+  const imageTags = geekListItems.map(item => `[imageid=${item.imageid} ${imageSize} inline]`);
   return imageTags.join('');
 };
 
@@ -58,14 +62,14 @@ const buildGameListTags = (geekListItems: GeekListItem[]) => {
   return gameListTags.join('\r\n');
 };
 
-export const generateText = (geeklistId: number, geekListItems: GeekListItem[]) => {
+export const generateText = (geeklistId: string, geekListItems: GeekListItem[], imageSize: string) => {
   const generatedText: string[] = [
     `Auction Link: [b][geeklist=${geeklistId}][/geeklist][/b]`,
-    buildImageTags(geekListItems),
+    buildImageTags(geekListItems, imageSize),
     `[b]Index of Items[/b]`,
     buildGameListTags(geekListItems),
     `[b][COLOR=#009900]List Generated via BGG Auction Ad tool (a free service)[/COLOR][/b]`
   ];
 
-  return generatedText.join('\r\n\r\n');
+  return generatedText.filter(text => text).join('\r\n\r\n');
 }
