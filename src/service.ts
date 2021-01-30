@@ -22,3 +22,28 @@ export const convertXmlToJson = async (xml: string) =>
       console.error({error});
       return error;
     });
+
+type GeekListItem = {
+  id: string;
+  imageid: string;
+  objectid: string;
+  objectname: string;
+  objecttype: string;
+  postdate: string;
+  editdate: string;
+  subtype: string;
+  thumbs: string;
+  username: string;
+};
+
+type GeekListJson = {
+  geeklist: {
+    item: {$: GeekListItem}[];
+  };
+};
+
+export const buildSortedItems = (geekListJson: GeekListJson) => {
+  const items: GeekListItem[] = geekListJson.geeklist.item.map(item => item.$);
+  const sortedItems = items.sort((a, b) => a.objectname.localeCompare(b.objectname));
+  return sortedItems;
+}

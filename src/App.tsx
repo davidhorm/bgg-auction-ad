@@ -8,7 +8,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { fetchGeekListXml, convertXmlToJson } from './service';
+import { fetchGeekListXml, convertXmlToJson, buildSortedItems } from './service';
 
 import './App.css';
 
@@ -32,7 +32,9 @@ const App = () => {
     setGeneratedText('loading');
     const geekListXml = await fetchGeekListXml(280112);
     const geekListJson = await convertXmlToJson(geekListXml);
-    setGeneratedText(geekListJson);
+    const geekListItems = buildSortedItems(geekListJson);
+    console.log(geekListItems);
+    setGeneratedText(JSON.stringify(geekListItems));
   };
 
   return (
