@@ -68,7 +68,7 @@ export const generateText = (geeklistId: string, geekListItems: GeekListItem[], 
     buildImageTags(geekListItems, imageSize),
     `[b]Index of Items[/b]`,
     buildGameListTags(geekListItems),
-    `[b][COLOR=#009900]List Generated via BGG Auction Ad tool (a free service)[/COLOR][/b]`
+    `[b][COLOR=#009900]List Generated via [url=http://davidhorm.github.io/bgg-auction-ad]BGG Auction Ad[/url] tool (a free service)[/COLOR][/b]`
   ];
 
   return generatedText.filter(text => text).join('\r\n\r\n');
