@@ -47,3 +47,25 @@ export const buildSortedItems = (geekListJson: GeekListJson) => {
   const sortedItems = items.sort((a, b) => a.objectname.localeCompare(b.objectname));
   return sortedItems;
 }
+
+const buildImageTags = (geekListItems: GeekListItem[]) => {
+  const imageTags = geekListItems.map(item => `[imageid=${item.imageid} small inline]`);
+  return imageTags.join('');
+};
+
+const buildGameListTags = (geekListItems: GeekListItem[]) => {
+  const gameListTags = geekListItems.map(item => `[b]${item.objectname}[/b] - ([thing=${item.objectid}]BGG[/thing]) ([listitem=${item.id}]Auction[/listitem])`);
+  return gameListTags.join('\r\n');
+};
+
+export const generateText = (geeklistId: number, geekListItems: GeekListItem[]) => {
+  const generatedText: string[] = [
+    `Auction Link: [b][geeklist=${geeklistId}][/geeklist][/b]`,
+    buildImageTags(geekListItems),
+    `[b]Index of Items[/b]`,
+    buildGameListTags(geekListItems),
+    `[b][COLOR=#009900]List Generated via BGG Auction Ad tool (a free service)[/COLOR][/b]`
+  ];
+
+  return generatedText.join('\r\n\r\n');
+}
