@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/bgg-auction-ad/static/css/main.023f39ec.chunk.css",
+    "main.js": "/bgg-auction-ad/static/js/main.0750c4f6.chunk.js",
+    "main.js.map": "/bgg-auction-ad/static/js/main.0750c4f6.chunk.js.map",
+    "runtime-main.js": "/bgg-auction-ad/static/js/runtime-main.d6588e74.js",
+    "runtime-main.js.map": "/bgg-auction-ad/static/js/runtime-main.d6588e74.js.map",
+    "static/js/2.38338e00.chunk.js": "/bgg-auction-ad/static/js/2.38338e00.chunk.js",
+    "static/js/2.38338e00.chunk.js.map": "/bgg-auction-ad/static/js/2.38338e00.chunk.js.map",
+    "static/js/3.b5ab37d6.chunk.js": "/bgg-auction-ad/static/js/3.b5ab37d6.chunk.js",
+    "static/js/3.b5ab37d6.chunk.js.map": "/bgg-auction-ad/static/js/3.b5ab37d6.chunk.js.map",
+    "index.html": "/bgg-auction-ad/index.html",
+    "static/css/main.023f39ec.chunk.css.map": "/bgg-auction-ad/static/css/main.023f39ec.chunk.css.map",
+    "static/js/2.38338e00.chunk.js.LICENSE.txt": "/bgg-auction-ad/static/js/2.38338e00.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d6588e74.js",
+    "static/js/2.38338e00.chunk.js",
+    "static/css/main.023f39ec.chunk.css",
+    "static/js/main.0750c4f6.chunk.js"
+  ]
+}
