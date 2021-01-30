@@ -8,7 +8,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { fetchGeekListXml } from './service';
+import { fetchGeekListXml, convertXmlToJson } from './service';
 
 import './App.css';
 
@@ -31,7 +31,8 @@ const App = () => {
     event.preventDefault();
     setGeneratedText('loading');
     const geekListXml = await fetchGeekListXml(280112);
-    setGeneratedText(geekListXml);
+    const geekListJson = await convertXmlToJson(geekListXml);
+    setGeneratedText(geekListJson);
   };
 
   return (
@@ -69,7 +70,7 @@ const App = () => {
       </form>
 
       <h3>Generated Text</h3>
-      <textarea className="generated-text" value={generatedText} readOnly></textarea>
+      <textarea className="generated-text" value={generatedText || ''} readOnly></textarea>
     </div>
   );
 }
