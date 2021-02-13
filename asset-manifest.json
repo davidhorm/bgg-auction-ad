@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/bgg-auction-ad/static/css/main.023f39ec.chunk.css",
-    "main.js": "/bgg-auction-ad/static/js/main.0750c4f6.chunk.js",
-    "main.js.map": "/bgg-auction-ad/static/js/main.0750c4f6.chunk.js.map",
+    "main.js": "/bgg-auction-ad/static/js/main.32a68e53.chunk.js",
+    "main.js.map": "/bgg-auction-ad/static/js/main.32a68e53.chunk.js.map",
     "runtime-main.js": "/bgg-auction-ad/static/js/runtime-main.d6588e74.js",
     "runtime-main.js.map": "/bgg-auction-ad/static/js/runtime-main.d6588e74.js.map",
     "static/js/2.38338e00.chunk.js": "/bgg-auction-ad/static/js/2.38338e00.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.d6588e74.js",
     "static/js/2.38338e00.chunk.js",
     "static/css/main.023f39ec.chunk.css",
-    "static/js/main.0750c4f6.chunk.js"
+    "static/js/main.32a68e53.chunk.js"
   ]
 }
