@@ -1,8 +1,9 @@
 import { parseStringPromise } from 'xml2js';
 
 export const fetchGeekListXml = async (geeklistId: string) => {
-  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-  const url = `${corsProxy}https://www.boardgamegeek.com/xmlapi/geeklist/${geeklistId}`;
+  const corsProxy = 'https://bgg-auction-ad.davidhorm.workers.dev/';
+  const bggGeeklistApi = `xmlapi/geeklist/${geeklistId}`;
+  const url = `${corsProxy}${bggGeeklistApi}`;
   const response = await fetch(url)
     .then(async (response: Response) => await response.text())
     .catch(error => {
