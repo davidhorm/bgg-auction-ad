@@ -33,7 +33,14 @@ const formatGeekListItemBody = (body: string[]): string[] => {
     return [];
   }
 
-  return body[0].toLowerCase().split('\n').filter(hasText => hasText);
+  // Will match with: [b], [/b], [color=red], [color=#f6f6f6]
+  const bggFormattingRegex = /\[\/?\w+(=#?\w+)?]/gi;
+
+  return body[0]
+          .toLowerCase()
+          .replaceAll(bggFormattingRegex, '')
+          .split('\n')
+          .filter(hasText => hasText.trim());
 };
 
 const getValueAfterSeparator = (foundText: string[]): string => {
