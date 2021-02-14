@@ -32,43 +32,27 @@ const buildAuctionLinkColumn = (geekListItems: GeekListItem[], hasBoxArt: boolea
   return buildColumn('Auction', content);
 };
 
-const emptyAuctionValue = '-';
-
-const buildStartingBidColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+const buildAuctionValueColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean, propertyName: 'startingBid' | 'softReserve' | 'buyItNow', columnHeader: string): string => {
   const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
-  const hasStartingBids = geekListItems.filter(item => item.startingBid).length > 0;
+  const hasPropertyName = geekListItems.filter(item => item[propertyName]).length > 0;
   
-  if (hasStartingBids) {
-    const content = geekListItems.map(item => `${boxArtLineBreaks}${item.startingBid || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
-    return buildColumn('SB', content);
+  if (hasPropertyName) {
+    const emptyAuctionValue = '-';
+    const content = geekListItems.map(item => `${boxArtLineBreaks}${item[propertyName] || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
+    return buildColumn(columnHeader, content);
   }
 
   return '';
 };
 
-const buildSoftReserveColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
-  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
-  const hasStartingBids = geekListItems.filter(item => item.softReserve).length > 0;
-  
-  if (hasStartingBids) {
-    const content = geekListItems.map(item => `${boxArtLineBreaks}${item.softReserve || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
-    return buildColumn('SR', content);
-  }
+const buildStartingBidColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string =>
+  buildAuctionValueColumn(geekListItems, hasBoxArt, 'startingBid', 'SB');
 
-  return '';
-};
+const buildSoftReserveColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => 
+  buildAuctionValueColumn(geekListItems, hasBoxArt, 'softReserve', 'SR');
 
-const buildBuyItNowColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
-  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
-  const hasStartingBids = geekListItems.filter(item => item.buyItNow).length > 0;
-  
-  if (hasStartingBids) {
-    const content = geekListItems.map(item => `${boxArtLineBreaks}${item.buyItNow || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
-    return buildColumn('BIN', content);
-  }
-
-  return '';
-};
+const buildBuyItNowColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => 
+  buildAuctionValueColumn(geekListItems, hasBoxArt, 'buyItNow', 'BIN');
 
 const buildGameListTable = (geekListItems: GeekListItem[], imageSize: string): string => {
   const hasBoxArt = imageSize === 'table';
