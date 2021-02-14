@@ -8,7 +8,9 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { fetchGeekListXml, convertXmlToJson, buildSortedItems, generateText } from './service';
+import { fetchGeekListJson } from './services/fetch.service';
+import { getGeekListItems } from './services/geeklist.service';
+import { generateText } from './services/bgg-formatter.service';
 
 import './App.css';
 
@@ -22,7 +24,7 @@ const useStyles = makeStyles({
 const App = () => {
   const [geekListId, setGeekListId] = useState('');
 
-  const [imageSize, setImageSize] = useState('small');
+  const [imageSize, setImageSize] = useState('table');
   const onImageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => setImageSize(event.target.value);
 
   const [generatedText, setGeneratedText] = useState('');
@@ -32,10 +34,10 @@ const App = () => {
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setGeneratedText('loading');
-    const geekListXml = await fetchGeekListXml(geekListId);
-    const geekListJson = await convertXmlToJson(geekListXml);
+    const geekListJson = await fetchGeekListJson(geekListId);
+
     if (geekListJson && geekListJson.geeklist) {
-      const geekListItems = buildSortedItems(geekListJson);
+      const geekListItems = getGeekListItems(geekListJson);
       const text = generateText(geekListId, geekListItems, imageSize);
       setGeneratedText(text);
     }
@@ -43,9 +45,11 @@ const App = () => {
       setGeneratedText(geekListJson.message);
     }
     else {
-      setGeneratedText(geekListXml);
+      setGeneratedText(geekListJson);
     }
   };
+
+  const imageRadioLabel = 'Image Size (and Location)';
 
   return (
     <div className="App">
@@ -68,12 +72,13 @@ const App = () => {
         />
 
         <FormControl component="fieldset" className={classes.root}>
-          <FormLabel component="legend">Image Size</FormLabel>
-          <RadioGroup aria-label="Image Size" name="image-size" value={imageSize} onChange={onImageSizeChange}>
-            <FormControlLabel value="small" label="Small" control={<Radio />} />
-            <FormControlLabel value="square" label="Square" control={<Radio />} />
-            <FormControlLabel value="micro" label="Micro" control={<Radio />} />
-            <FormControlLabel value="hidden" label="Hidden" control={<Radio />} />
+          <FormLabel component="legend">{imageRadioLabel}</FormLabel>
+          <RadioGroup aria-label={imageRadioLabel} name="image-size-location" value={imageSize} onChange={onImageSizeChange}>
+            <FormControlLabel value="table" label="Square (Table)" control={<Radio />} />
+            <FormControlLabel value="small" label="Small (Gallery)" control={<Radio />} />
+            <FormControlLabel value="square" label="Square  (Gallery)" control={<Radio />} />
+            <FormControlLabel value="micro" label="Micro  (Gallery)" control={<Radio />} />
+            <FormControlLabel value="hidden" label="None" control={<Radio />} />
           </RadioGroup>
         </FormControl>
 
