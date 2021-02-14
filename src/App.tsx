@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 const App = () => {
   const [geekListId, setGeekListId] = useState('');
 
-  const [imageSize, setImageSize] = useState('small');
+  const [imageSize, setImageSize] = useState('table');
   const onImageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => setImageSize(event.target.value);
 
   const [generatedText, setGeneratedText] = useState('');
@@ -49,6 +49,8 @@ const App = () => {
     }
   };
 
+  const imageRadioLabel = 'Image Size (and Location)';
+
   return (
     <div className="App">
       <h1>BGG Auction Ad Generator</h1>
@@ -70,12 +72,13 @@ const App = () => {
         />
 
         <FormControl component="fieldset" className={classes.root}>
-          <FormLabel component="legend">Image Size</FormLabel>
-          <RadioGroup aria-label="Image Size" name="image-size" value={imageSize} onChange={onImageSizeChange}>
-            <FormControlLabel value="small" label="Small" control={<Radio />} />
-            <FormControlLabel value="square" label="Square" control={<Radio />} />
-            <FormControlLabel value="micro" label="Micro" control={<Radio />} />
-            <FormControlLabel value="hidden" label="Hidden" control={<Radio />} />
+          <FormLabel component="legend">{imageRadioLabel}</FormLabel>
+          <RadioGroup aria-label={imageRadioLabel} name="image-size-location" value={imageSize} onChange={onImageSizeChange}>
+            <FormControlLabel value="table" label="Square (Table)" control={<Radio />} />
+            <FormControlLabel value="small" label="Small (Gallery)" control={<Radio />} />
+            <FormControlLabel value="square" label="Square  (Gallery)" control={<Radio />} />
+            <FormControlLabel value="micro" label="Micro  (Gallery)" control={<Radio />} />
+            <FormControlLabel value="hidden" label="None" control={<Radio />} />
           </RadioGroup>
         </FormControl>
 

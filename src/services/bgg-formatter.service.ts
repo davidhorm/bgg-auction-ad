@@ -1,7 +1,7 @@
 import { GeekListItem } from "./geeklist.service";
 
-const buildImageTags = (geekListItems: GeekListItem[], imageSize: string) => {
-  if (imageSize === 'hidden') {
+const buildImageGalleryTags = (geekListItems: GeekListItem[], imageSize: string) => {
+  if (imageSize === 'hidden' || imageSize === 'table') {
     return '';
   }
 
@@ -17,7 +17,7 @@ const buildGameListTags = (geekListItems: GeekListItem[]) => {
 export const generateText = (geeklistId: string, geekListItems: GeekListItem[], imageSize: string) => {
   const generatedText: string[] = [
     `Auction Link: [b][geeklist=${geeklistId}][/geeklist][/b]`,
-    buildImageTags(geekListItems, imageSize),
+    buildImageGalleryTags(geekListItems, imageSize),
     `[b]Index of Items[/b]`,
     buildGameListTags(geekListItems),
     `[b][COLOR=#009900]List Generated via [url=http://davidhorm.github.io/bgg-auction-ad]BGG Auction Ad[/url] tool (a free service)[/COLOR][/b]`
