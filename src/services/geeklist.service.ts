@@ -58,17 +58,17 @@ const getValueAfterSeparator = (foundText: string[]): string => {
 };
 
 const getStartingBid = (formattedGeekListItemBody: string[]): string => {
-  const foundText = formattedGeekListItemBody.filter(text => text.match(/^(starting bid)|(sb)|(opening bid)|(min bid)|(minimum bid)/i));
+  const foundText = formattedGeekListItemBody.filter(text => text.match(/^((starting bid)|(sb)|(opening bid)|(min bid)|(minimum bid))/i));
   return getValueAfterSeparator(foundText);
 };
 
 const getSoftReserve = (formattedGeekListItemBody: string[]): string => {
-  const foundText = formattedGeekListItemBody.filter(text => text.match(/^(soft reserve)|(sr)|(hard reserve)/i));
+  const foundText = formattedGeekListItemBody.filter(text => text.match(/^((soft reserve)|(sr)|(hard reserve))/i));
   return getValueAfterSeparator(foundText);
 };
 
 const getBuyItNow = (formattedGeekListItemBody: string[]): string => {
-  const foundText = formattedGeekListItemBody.filter(text => text.match(/^(buy it now)|(bin)/i));
+  const foundText = formattedGeekListItemBody.filter(text => text.match(/^((buy it now)|(bin))/i));
   return getValueAfterSeparator(foundText);
 };
 
