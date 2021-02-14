@@ -8,7 +8,8 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { fetchGeekListXml, convertXmlToJson, buildSortedItems, generateText } from './service';
+import { fetchGeekListJson } from './services/fetch.service';
+import { buildSortedItems, generateText } from './services/geeklist.service';
 
 import './App.css';
 
@@ -32,8 +33,8 @@ const App = () => {
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setGeneratedText('loading');
-    const geekListXml = await fetchGeekListXml(geekListId);
-    const geekListJson = await convertXmlToJson(geekListXml);
+    const geekListJson = await fetchGeekListJson(geekListId);
+
     if (geekListJson && geekListJson.geeklist) {
       const geekListItems = buildSortedItems(geekListJson);
       const text = generateText(geekListId, geekListItems, imageSize);
@@ -43,7 +44,7 @@ const App = () => {
       setGeneratedText(geekListJson.message);
     }
     else {
-      setGeneratedText(geekListXml);
+      setGeneratedText(geekListJson);
     }
   };
 
