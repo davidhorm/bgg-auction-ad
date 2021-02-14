@@ -11,58 +11,75 @@ const buildImageGalleryTags = (geekListItems: GeekListItem[], imageSize: string)
 
 const buildColumn = (header: string, content: string): string => `[floatleft][u][b]${header}[/b][/u]\r\n${content}[/floatleft]`;
 
-const buildGameColumn = (geekListItems: GeekListItem[]): string => {
-  const content = geekListItems.map(item => `[thing=${item.objectid}][/thing]`).join('\r\n');
+const buildBoxArtColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+  if (hasBoxArt) {
+    const content = geekListItems.map(item => `[imageid=${item.imageid} square]`).join('');
+    return buildColumn('Box Art', content);  
+  }
+  
+  return '';
+};
+
+const buildGameColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
+  const content = geekListItems.map(item => `${boxArtLineBreaks}[thing=${item.objectid}][/thing]${boxArtLineBreaks}`).join('\r\n');
   return buildColumn('Game (BGG Link)', content);
 };
 
-const buildAuctionLinkColumn = (geekListItems: GeekListItem[]): string => {
-  const content = geekListItems.map(item => `[listitem=${item.id}]Auction[/listitem]`).join('\r\n');
+const buildAuctionLinkColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
+  const content = geekListItems.map(item => `${boxArtLineBreaks}[listitem=${item.id}]Auction[/listitem]${boxArtLineBreaks}`).join('\r\n');
   return buildColumn('Auction', content);
 };
 
 const emptyAuctionValue = '-';
 
-const buildStartingBidColumn = (geekListItems: GeekListItem[]): string => {
+const buildStartingBidColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
   const hasStartingBids = geekListItems.filter(item => item.startingBid).length > 0;
   
   if (hasStartingBids) {
-    const content = geekListItems.map(item => item.startingBid || emptyAuctionValue).join('\r\n');
+    const content = geekListItems.map(item => `${boxArtLineBreaks}${item.startingBid || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
     return buildColumn('SB', content);
   }
 
   return '';
 };
 
-const buildSoftReserveColumn = (geekListItems: GeekListItem[]): string => {
+const buildSoftReserveColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
   const hasStartingBids = geekListItems.filter(item => item.softReserve).length > 0;
   
   if (hasStartingBids) {
-    const content = geekListItems.map(item => item.softReserve || emptyAuctionValue).join('\r\n');
+    const content = geekListItems.map(item => `${boxArtLineBreaks}${item.softReserve || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
     return buildColumn('SR', content);
   }
 
   return '';
 };
 
-const buildBuyItNowColumn = (geekListItems: GeekListItem[]): string => {
+const buildBuyItNowColumn = (geekListItems: GeekListItem[], hasBoxArt: boolean): string => {
+  const boxArtLineBreaks = hasBoxArt ? '\r\n' : '';
   const hasStartingBids = geekListItems.filter(item => item.buyItNow).length > 0;
   
   if (hasStartingBids) {
-    const content = geekListItems.map(item => item.buyItNow || emptyAuctionValue).join('\r\n');
+    const content = geekListItems.map(item => `${boxArtLineBreaks}${item.buyItNow || emptyAuctionValue}${boxArtLineBreaks}`).join('\r\n');
     return buildColumn('BIN', content);
   }
 
   return '';
 };
 
-const buildGameListTable = (geekListItems: GeekListItem[]): string => {
+const buildGameListTable = (geekListItems: GeekListItem[], imageSize: string): string => {
+  const hasBoxArt = imageSize === 'table';
+
   const tableColumns = [
-    buildGameColumn(geekListItems),
-    buildAuctionLinkColumn(geekListItems),
-    buildStartingBidColumn(geekListItems),
-    buildSoftReserveColumn(geekListItems),
-    buildBuyItNowColumn(geekListItems),
+    buildBoxArtColumn(geekListItems, hasBoxArt),
+    buildGameColumn(geekListItems, hasBoxArt),
+    buildAuctionLinkColumn(geekListItems, hasBoxArt),
+    buildStartingBidColumn(geekListItems, hasBoxArt),
+    buildSoftReserveColumn(geekListItems, hasBoxArt),
+    buildBuyItNowColumn(geekListItems, hasBoxArt),
   ];
 
   return `[size=12][floatleft]${tableColumns.join('')}[/floatleft][/size][clear]`;
@@ -72,7 +89,7 @@ export const generateText = (geeklistId: string, geekListItems: GeekListItem[], 
   const generatedText: string[] = [
     `Auction Link: [b][geeklist=${geeklistId}][/geeklist][/b]`,
     buildImageGalleryTags(geekListItems, imageSize),
-    buildGameListTable(geekListItems),
+    buildGameListTable(geekListItems, imageSize),
     `[b][COLOR=#009900]List Generated via [url=http://davidhorm.github.io/bgg-auction-ad]BGG Auction Ad[/url] tool (a free service)[/COLOR][/b]`
   ];
 
