@@ -9,7 +9,8 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { fetchGeekListJson } from './services/fetch.service';
-import { getGeekListItems, generateText } from './services/geeklist.service';
+import { getGeekListItems } from './services/geeklist.service';
+import { generateText } from './services/bgg-formatter.service';
 
 import './App.css';
 
