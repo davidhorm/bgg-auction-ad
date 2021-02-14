@@ -33,8 +33,8 @@ const formatGeekListItemBody = (body: string[]): string[] => {
     return [];
   }
 
-  // Will match with: [b], [/b], [color=red], [color=#f6f6f6]
-  const bggFormattingRegex = /\[\/?\w+(=#?\w+)?]/gi;
+  // Will match with: [b], [/b], [color=red], [color=#f6f6f6], [-], [/-]
+  const bggFormattingRegex = /(\[\/?\w+(=#?\w+)?])|(\[\/?-])/gi;
 
   return body[0]
           .toLowerCase()
@@ -46,12 +46,12 @@ const formatGeekListItemBody = (body: string[]): string[] => {
 const getValueAfterSeparator = (foundText: string[]): string => {
   const semicolon_separator = ': ';
   if (foundText[0] && foundText[0].indexOf(semicolon_separator) >= 0) {
-    return foundText[0].split(semicolon_separator)[1];
+    return foundText[0].split(semicolon_separator)[1].trim();
   }
 
   const dash_separator = ' - ';
   if (foundText[0] && foundText[0].indexOf(dash_separator) >= 0) {
-    return foundText[0].split(dash_separator)[1];
+    return foundText[0].split(dash_separator)[1].trim();
   }
 
   return '';
