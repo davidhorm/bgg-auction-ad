@@ -86,10 +86,12 @@ const buildGameListTable = (geekListItems: GeekListItem[], imageSize: string): s
 };
 
 export const generateText = (geeklistId: string, geekListItems: GeekListItem[], imageSize: string) => {
+  const listSortedByName = geekListItems.sort((a, b) => a.objectname.localeCompare(b.objectname));
+
   const generatedText: string[] = [
     `Auction Link: [b][geeklist=${geeklistId}][/geeklist][/b]`,
-    buildImageGalleryTags(geekListItems, imageSize),
-    buildGameListTable(geekListItems, imageSize),
+    buildImageGalleryTags(listSortedByName, imageSize),
+    buildGameListTable(listSortedByName, imageSize),
     `[b][COLOR=#009900]List Generated via [url=http://davidhorm.github.io/bgg-auction-ad]BGG Auction Ad[/url] tool (a free service)[/COLOR][/b]`
   ];
 
