@@ -1,4 +1,4 @@
-type GeekListItem = {
+type GeekListItemAttr = {
   id: string;
   imageid: string;
   objectid: string;
@@ -11,16 +11,72 @@ type GeekListItem = {
   username: string;
 };
 
+type AuctionValues = {
+  startingBid: string;
+  softReserve: string;
+  buyItNow: string;
+};
+
+type GeekListItem = GeekListItemAttr & AuctionValues;
+
 type GeekListJson = {
   geeklist: {
-    item: {$: GeekListItem}[];
+    item: {
+      $: GeekListItemAttr;
+      body: string[];
+    }[];
   };
 };
 
-export const buildSortedItems = (geekListJson: GeekListJson) => {
-  const items: GeekListItem[] = geekListJson.geeklist.item.map(item => item.$);
-  const sortedItems = items.sort((a, b) => a.objectname.localeCompare(b.objectname));
-  return sortedItems;
+const formatGeekListItemBody = (body: string[]): string[] => {
+  if (!body || !body[0]) {
+    return [];
+  }
+
+  return body[0].toLowerCase().split('\n').filter(hasText => hasText);
+};
+
+const getValueAfterSeparator = (foundText: string[]): string => {
+  const semicolon_separator = ': ';
+  if (foundText[0] && foundText[0].indexOf(semicolon_separator) >= 0) {
+    return foundText[0].split(semicolon_separator)[1];
+  }
+
+  const dash_separator = ' - ';
+  if (foundText[0] && foundText[0].indexOf(dash_separator) >= 0) {
+    return foundText[0].split(dash_separator)[1];
+  }
+
+  return '';
+};
+
+const getStartingBid = (formattedGeekListItemBody: string[]): string => {
+  const foundText = formattedGeekListItemBody.filter(text => text.match(/^(starting bid)|(sb)|(opening bid)|(min bid)|(minimum bid)/i));
+  return getValueAfterSeparator(foundText);
+};
+
+const getSoftReserve = (formattedGeekListItemBody: string[]): string => {
+  const foundText = formattedGeekListItemBody.filter(text => text.match(/^(soft reserve)|(sr)|(hard reserve)/i));
+  return getValueAfterSeparator(foundText);
+};
+
+const getBuyItNow = (formattedGeekListItemBody: string[]): string => {
+  const foundText = formattedGeekListItemBody.filter(text => text.match(/^(buy it now)|(bin)/i));
+  return getValueAfterSeparator(foundText);
+};
+
+export const getGeekListItems = (geekListJson: GeekListJson) => {
+  const items: GeekListItem[] = geekListJson.geeklist.item.map(item => {
+    const formattedGeekListItemBody = formatGeekListItemBody(item.body);
+    return {
+      ...(item.$),
+      startingBid: getStartingBid(formattedGeekListItemBody),
+      softReserve: getSoftReserve(formattedGeekListItemBody),
+      buyItNow: getBuyItNow(formattedGeekListItemBody),
+    };
+  });
+
+  return items;
 }
 
 const buildImageTags = (geekListItems: GeekListItem[], imageSize: string) => {

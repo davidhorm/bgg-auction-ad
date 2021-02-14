@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { fetchGeekListJson } from './services/fetch.service';
-import { buildSortedItems, generateText } from './services/geeklist.service';
+import { getGeekListItems, generateText } from './services/geeklist.service';
 
 import './App.css';
 
@@ -36,7 +36,7 @@ const App = () => {
     const geekListJson = await fetchGeekListJson(geekListId);
 
     if (geekListJson && geekListJson.geeklist) {
-      const geekListItems = buildSortedItems(geekListJson);
+      const geekListItems = getGeekListItems(geekListJson);
       const text = generateText(geekListId, geekListItems, imageSize);
       setGeneratedText(text);
     }
