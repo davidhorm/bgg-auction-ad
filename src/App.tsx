@@ -74,7 +74,8 @@ const App = () => {
         <FormControl component="fieldset" className={classes.root}>
           <FormLabel component="legend">{imageRadioLabel}</FormLabel>
           <RadioGroup aria-label={imageRadioLabel} name="image-size-location" value={imageSize} onChange={onImageSizeChange}>
-            <FormControlLabel value="table" label="Square (Table)" control={<Radio />} />
+            <FormControlLabel value="table-geeklist" label="Square (Table in GeekList)" control={<Radio />} />
+            <FormControlLabel value="table-forum" label="Square (Table in Forum)" control={<Radio />} />
             <FormControlLabel value="small" label="Small (Gallery)" control={<Radio />} />
             <FormControlLabel value="square" label="Square  (Gallery)" control={<Radio />} />
             <FormControlLabel value="micro" label="Micro  (Gallery)" control={<Radio />} />
