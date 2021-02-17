@@ -1,25 +1,36 @@
 import { GeekListItem } from "./geeklist.service";
 
-const buildImageGalleryTags = (geekListItems: GeekListItem[], imageSize: string) => {
-  if (imageSize === 'hidden' || imageSize === 'table-geeklist' || imageSize === 'table-forum') {
-    return '';
-  }
-
-  const imageTags = geekListItems.map(item => `[imageid=${item.imageid} ${imageSize} inline]`);
-  return imageTags.join('');
+type BggTableRowFormat = {
+  boxArtCell: string;
+  gameNameCell: string;
+  auctionLinkCell: string;
+  startingBidCell: string;
+  softReserveCell: string;
+  buyItNowCell: string;
 };
 
-const buildColumn = (header: string, content: string): string => `[floatleft][u][b]${header}[/b][/u]\r\n${content}[/floatleft]`;
-
-const buildBoxArtColumn = (geekListItems: GeekListItem[], imageSize: string): string => {
-  const hasBoxArt = imageSize.startsWith('table-');
-  if (hasBoxArt) {
-    const content = geekListItems.map(item => `[imageid=${item.imageid} square]`).join('');
-    return buildColumn('Box Art', content);  
-  }
-  
-  return '';
+type BggTableFormat = {
+  hasBoxArtColumn: boolean;
+  hasStartingBidColumn: boolean;
+  hasSoftReserveColumn: boolean;
+  hasBuyItNowColumn: boolean;
+  tableRows: BggTableRowFormat[];
 };
+
+/**
+ * When imageId === '0', then replace with transparent box art instead.
+ * 
+ * This happened with GeekList ID 281572
+ * 
+ * @param imageId 
+ */
+const buildBoxArtCell = (imageId: string): string => {
+  const transparentBoxArt = '[imageid=5987513 square]';
+  return imageId !== '0' ? `[imageid=${imageId} square]` : transparentBoxArt;
+};
+
+const buildGameNameCell = (objectId: string): string => `[thing=${objectId}][/thing]`; // TODO: line break objectname if too long
+const buildAuctionLinkCell = (geekListItemId: string): string => `[listitem=${geekListItemId}]Auction[/listitem]`;
 
 /**
  * Need to add extra line breaks if Box Art is in the table. Also different line break formatting is needed depending on if text is posted in a GeekList or Forum.
@@ -35,45 +46,55 @@ const formatCellWithLineBreaks = (imageSize: string, content: string): string =>
   }
 };
 
-const buildGameColumn = (geekListItems: GeekListItem[], imageSize: string): string => {
-  const content = geekListItems.map(item => formatCellWithLineBreaks(imageSize, `[thing=${item.objectid}][/thing]`)).join('\r\n');
-  return buildColumn('Game (BGG Link)', content);
+const transformToBggTableFormat = (geekListItems: GeekListItem[], imageSize: string): BggTableFormat => {
+  const hasBoxArtColumn = imageSize.startsWith('table-');
+  const hasStartingBidColumn = geekListItems.filter(item => item.startingBid).length > 0;
+  const hasSoftReserveColumn = geekListItems.filter(item => item.softReserve).length > 0;
+  const hasBuyItNowColumn = geekListItems.filter(item => item.buyItNow).length > 0;
+
+  const defaultAuctionValue = '-';
+
+  const sortByGameName = (a: GeekListItem, b: GeekListItem) => a.objectname.localeCompare(b.objectname);
+
+  const tableRows = geekListItems
+    .sort(sortByGameName)
+    .map(item => ({
+      boxArtCell: hasBoxArtColumn ? buildBoxArtCell(item.imageid) : '',
+      gameNameCell: formatCellWithLineBreaks(imageSize, buildGameNameCell(item.objectid)),
+      auctionLinkCell: formatCellWithLineBreaks(imageSize, buildAuctionLinkCell(item.id)),
+      startingBidCell: hasStartingBidColumn ? formatCellWithLineBreaks(imageSize, item.startingBid || defaultAuctionValue) : '',
+      softReserveCell: hasSoftReserveColumn ? formatCellWithLineBreaks(imageSize, item.softReserve || defaultAuctionValue) : '',
+      buyItNowCell: hasBuyItNowColumn ? formatCellWithLineBreaks(imageSize, item.buyItNow || defaultAuctionValue) : '',
+    }));
+
+  return {
+    hasBoxArtColumn,
+    hasStartingBidColumn,
+    hasSoftReserveColumn,
+    hasBuyItNowColumn,
+    tableRows,
+  };
 };
 
-const buildAuctionLinkColumn = (geekListItems: GeekListItem[], imageSize: string): string => {
-  const content = geekListItems.map(item => formatCellWithLineBreaks(imageSize, `[listitem=${item.id}]Auction[/listitem]`)).join('\r\n');
-  return buildColumn('Auction', content);
-};
-
-const buildAuctionValueColumn = (geekListItems: GeekListItem[], imageSize: string, propertyName: 'startingBid' | 'softReserve' | 'buyItNow', columnHeader: string): string => {
-  const hasPropertyName = geekListItems.filter(item => item[propertyName]).length > 0;
-  
-  if (hasPropertyName) {
-    const emptyAuctionValue = '-';
-    const content = geekListItems.map(item => formatCellWithLineBreaks(imageSize, item[propertyName] || emptyAuctionValue)).join('\r\n');
-    return buildColumn(columnHeader, content);
+const buildImageGalleryTags = (geekListItems: GeekListItem[], imageSize: string) => {
+  if (imageSize === 'hidden' || imageSize === 'table-geeklist' || imageSize === 'table-forum') {
+    return '';
   }
 
-  return '';
+  const imageTags = geekListItems.map(item => item.imageid !== '0' ? `[imageid=${item.imageid} ${imageSize} inline]` : '');
+  return imageTags.join('');
 };
 
-const buildStartingBidColumn = (geekListItems: GeekListItem[], imageSize: string): string =>
-  buildAuctionValueColumn(geekListItems, imageSize, 'startingBid', 'SB');
+const buildColumn = (header: string, content: string): string => `[floatleft][u][b]${header}[/b][/u]\r\n${content}[/floatleft]`;
 
-const buildSoftReserveColumn = (geekListItems: GeekListItem[], imageSize: string): string => 
-  buildAuctionValueColumn(geekListItems, imageSize, 'softReserve', 'SR');
-
-const buildBuyItNowColumn = (geekListItems: GeekListItem[], imageSize: string): string => 
-  buildAuctionValueColumn(geekListItems, imageSize, 'buyItNow', 'BIN');
-
-const buildGameListTable = (geekListItems: GeekListItem[], imageSize: string): string => {
+const buildGameListTable = (bggTableFormat: BggTableFormat): string => {
   const tableColumns = [
-    buildBoxArtColumn(geekListItems, imageSize),
-    buildGameColumn(geekListItems, imageSize),
-    buildAuctionLinkColumn(geekListItems, imageSize),
-    buildStartingBidColumn(geekListItems, imageSize),
-    buildSoftReserveColumn(geekListItems, imageSize),
-    buildBuyItNowColumn(geekListItems, imageSize),
+    bggTableFormat.hasBoxArtColumn ? buildColumn('Box Art', bggTableFormat.tableRows.map(row => row.boxArtCell).join('')) : '',
+    buildColumn('Game (BGG Link)', bggTableFormat.tableRows.map(row => row.gameNameCell).join('\r\n')),
+    buildColumn('Auction', bggTableFormat.tableRows.map(row => row.auctionLinkCell).join('\r\n')),
+    bggTableFormat.hasStartingBidColumn ? buildColumn('SB', bggTableFormat.tableRows.map(row => row.startingBidCell).join('\r\n')) : '',
+    bggTableFormat.hasSoftReserveColumn ? buildColumn('SR', bggTableFormat.tableRows.map(row => row.softReserveCell).join('\r\n')) : '',
+    bggTableFormat.hasBuyItNowColumn ? buildColumn('BIN', bggTableFormat.tableRows.map(row => row.buyItNowCell).join('\r\n')) : '',
   ];
 
   return `[size=12][floatleft]${tableColumns.join('')}[/floatleft][/size][clear]`;
@@ -82,10 +103,12 @@ const buildGameListTable = (geekListItems: GeekListItem[], imageSize: string): s
 export const generateText = (geeklistId: string, geekListItems: GeekListItem[], imageSize: string) => {
   const listSortedByName = geekListItems.sort((a, b) => a.objectname.localeCompare(b.objectname));
 
+  const bggTableFormat = transformToBggTableFormat(geekListItems, imageSize);
+
   const generatedText: string[] = [
     `Auction Link: [b][geeklist=${geeklistId}][/geeklist][/b]`,
     buildImageGalleryTags(listSortedByName, imageSize),
-    buildGameListTable(listSortedByName, imageSize),
+    buildGameListTable(bggTableFormat),
     `[b][COLOR=#009900]List Generated via [url=http://davidhorm.github.io/bgg-auction-ad]BGG Auction Ad[/url] tool (a free service)[/COLOR][/b]`
   ];
 
