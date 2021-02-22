@@ -29,7 +29,26 @@ const buildBoxArtCell = (imageId: string): string => {
   return imageId !== '0' ? `[imageid=${imageId} square]` : transparentBoxArt;
 };
 
-const buildGameNameCell = (objectId: string): string => `[thing=${objectId}][/thing]`; // TODO: line break objectname if too long
+// TODO: also return number of rows
+const buildGameNameCell = (objectId: string, objectName: string): string => {
+  if (objectName.length <= 40) {
+    return `[thing=${objectId}][/thing]`;
+  }
+
+  if (objectName.indexOf(' – ') > 0) {
+    const gameNameWithLineBreak = objectName.replaceAll(' – ', '\r\n – ');
+    return `[thing=${objectId}]${gameNameWithLineBreak}[/thing]`;
+  }
+
+  if (objectName.indexOf(': ') > 0) {
+    const gameNameWithLineBreak = objectName.replaceAll(': ', ':\r\n ');
+    return `[thing=${objectId}]${gameNameWithLineBreak}[/thing]`;
+  }
+
+  // TODO: deal with spaces, maybe parentheses first?
+  return `[thing=${objectId}][/thing]`
+};
+
 const buildAuctionLinkCell = (geekListItemId: string): string => `[listitem=${geekListItemId}]Auction[/listitem]`;
 
 /**
@@ -60,7 +79,7 @@ const transformToBggTableFormat = (geekListItems: GeekListItem[], imageSize: str
     .sort(sortByGameName)
     .map(item => ({
       boxArtCell: hasBoxArtColumn ? buildBoxArtCell(item.imageid) : '',
-      gameNameCell: formatCellWithLineBreaks(imageSize, buildGameNameCell(item.objectid)),
+      gameNameCell: formatCellWithLineBreaks(imageSize, buildGameNameCell(item.objectid, item.objectname)), // TODO deal with multi-line games
       auctionLinkCell: formatCellWithLineBreaks(imageSize, buildAuctionLinkCell(item.id)),
       startingBidCell: hasStartingBidColumn ? formatCellWithLineBreaks(imageSize, item.startingBid || defaultAuctionValue) : '',
       softReserveCell: hasSoftReserveColumn ? formatCellWithLineBreaks(imageSize, item.softReserve || defaultAuctionValue) : '',
